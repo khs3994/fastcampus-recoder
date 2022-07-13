@@ -18,7 +18,7 @@ class CountUpView(
         override fun run() {
             val currentTimeStamp = SystemClock.elapsedRealtime()
             val countTimeSeconds = ((currentTimeStamp - startTimeStamp)/1000L).toInt()
-            undateCountTime(countTimeSeconds)
+            updateCountTime(countTimeSeconds)
 
             handler?.postDelayed(this, 1000L)
         }
@@ -33,7 +33,11 @@ class CountUpView(
         handler?.removeCallbacks(countUpAction)
     }
 
-    private fun undateCountTime(countTimeSeconds: Int) {
+    fun clearCountTime() {
+        updateCountTime(0)
+    }
+
+    private fun updateCountTime(countTimeSeconds: Int) {
         val minutes = countTimeSeconds / 60
         val seconds = countTimeSeconds % 60
         text = "%02d:%02d".format(minutes, seconds)

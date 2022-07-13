@@ -75,6 +75,8 @@ class MainActivity : AppCompatActivity() {
         }
         resetBtn.setOnClickListener {
             stopPlaying()
+            visualizerView.clearVisualization()
+            recordTimeView.clearCountTime()
             state = State.BEFORE_RECORDING
         }
         recordButton.setOnClickListener {
@@ -128,6 +130,10 @@ class MainActivity : AppCompatActivity() {
         player = MediaPlayer().apply {
             setDataSource(recordingFilePath)//재생할 데이터의 경로
             prepare()// 재생을 할수있는 상태로 만들어줌
+        }
+        player?.setOnCompletionListener {
+            stopPlaying()
+            state = State.AFTER_RECORDING
         }
         player?.start()
         visualizerView.startVisualizing(true)
