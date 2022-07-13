@@ -10,6 +10,10 @@ import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
 
+    private val visualizerView: SoundVisualizerView by lazy {
+        findViewById(R.id.visuallizer)
+    }
+
     private val resetBtn: Button by lazy {
         findViewById(R.id.reset_btn)
     }
@@ -17,10 +21,7 @@ class MainActivity : AppCompatActivity() {
     private val recordButton: RecordButton by lazy {
         findViewById(R.id.record_btn)
     }
-    private val requiredPermission = arrayOf(
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    )
+    private val requiredPermission = arrayOf(Manifest.permission.RECORD_AUDIO)
     private val recordingFilePath: String by lazy { // 외부 저장소에 녹음 파일을 지정
         "${externalCacheDir?.absolutePath}/recording.3gp" // 파일 경로
     }
@@ -68,6 +69,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onClick() {
+        visualizerView.onRequestCurrentAmplitude = {
+            recorder?.maxAmplitude ?: 0
+        }
         resetBtn.setOnClickListener {
             stopPlaying()
             state = State.BEFORE_RECORDING
@@ -103,6 +107,7 @@ class MainActivity : AppCompatActivity() {
             prepare()//이걸 해줘야지 실제로 녹음이 가능한 상태가 됨
         }
         recorder?.start()//녹음 시작
+        visualizerView.startVisualizing(false)
         state = State.ON_RECORDING
     }
 
@@ -112,6 +117,7 @@ class MainActivity : AppCompatActivity() {
             release()//메모리 해제
         }
         recorder = null
+        visualizerView.stopVisualizing()
         state = State.AFTER_RECORDING
     }
 
@@ -121,12 +127,14 @@ class MainActivity : AppCompatActivity() {
             prepare()// 재생을 할수있는 상태로 만들어줌
         }
         player?.start()
+        visualizerView.startVisualizing(true)
         state = State.ON_PLAYING
     }
 
     private fun stopPlaying() {//재생 중지
         player?.release()
         player = null
+        visualizerView.stopVisualizing()
         state = State.AFTER_RECORDING
     }
 
