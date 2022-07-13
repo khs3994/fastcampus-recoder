@@ -27,7 +27,7 @@
         app:layout_constraintTop_toTopOf="@id/record_btn"
         tools:ignore="HardcodedText" />
 
-    <TextView
+    <fastcampus.app.part2.chapter07.CountUpView
         android:id="@+id/record_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
